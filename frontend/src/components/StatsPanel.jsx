@@ -1,5 +1,3 @@
-import { Activity } from 'lucide-react'
-
 function Readout({ label, value, unit, color = 'var(--cyan)', size = 32 }) {
   return (
     <div className="readout-block">
@@ -70,7 +68,9 @@ export default function StatsPanel({ simData, currentStep, currentTime }) {
             const flat = simData.status_history[currentStep]?.flat() ?? []
             const crit = flat.filter(s => s === 'Critical').length
             const warn = flat.filter(s => s === 'Warning').length
-            const safe = 64 - crit - warn
+            const meta = simData.grid_metadata
+            const total = meta ? (meta.grid_nr ?? meta.grid_n ?? 8) * (meta.grid_nc ?? meta.grid_n ?? 8) : flat.length || 64
+            const safe = total - crit - warn
             const allTTC = simData.time_to_critical.flat().filter(v => v !== null)
             const nextCrit = allTTC.length > 0 ? Math.min(...allTTC) : null
 

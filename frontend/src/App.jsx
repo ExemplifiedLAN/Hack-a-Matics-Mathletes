@@ -10,6 +10,8 @@ import WaterLevelChart from './components/WaterLevelChart'
 import ScenarioComparison from './components/ScenarioComparison'
 import PopulationPanel from './components/PopulationPanel'
 import SituationBrief from './components/SituationBrief'
+import RealTerrainMap from './components/RealTerrainMap'
+import EarlyWarningDashboard from './components/EarlyWarningDashboard'
 
 const API = '/api'
 
@@ -28,6 +30,7 @@ export default function App() {
     duration_hours: 12,
     time_step: 0.25,
     drainage_failure: false,
+    drainage_scale: 1.0,
     blocked_channels: [],
     scenario: 'custom',
   })
@@ -82,12 +85,12 @@ export default function App() {
 
       {/* Sticky header + tab bar */}
       <div style={{ position: 'sticky', top: 0, zIndex: 50, background: '#000' }}>
-        <Header simData={simData} currentStep={currentStep} currentTime={currentTime} loading={loading} />
+        <Header simData={simData} currentTime={currentTime} loading={loading} />
         <div style={{ display: 'flex', borderBottom: '1px solid var(--border)', padding: '0 16px' }}>
-          {[['simulation','SIMULATION // ACTIVE'],['compare','SCENARIO // COMPARE']].map(([tab, label]) => (
+          {[['simulation','SIMULATION // ACTIVE'],['terrain','REAL TERRAIN // MODE'],['compare','SCENARIO // COMPARE']].map(([tab, label]) => (
             <button key={tab} onClick={() => setActiveTab(tab)} style={{
               padding: '7px 18px',
-              fontFamily: 'Rajdhani', fontWeight: 700, fontSize: 11,
+              fontFamily: 'Rajdhani', fontWeight: 700, fontSize: 14,
               letterSpacing: '0.2em', textTransform: 'uppercase',
               color: activeTab === tab ? 'var(--cyan)' : 'var(--text-muted)',
               borderBottom: activeTab === tab ? '2px solid var(--cyan)' : '2px solid transparent',
@@ -104,7 +107,7 @@ export default function App() {
 
           {error && (
             <div style={{
-              marginBottom: 10, padding: '8px 14px', fontSize: 11,
+              marginBottom: 10, padding: '8px 14px', fontSize: 13,
               background: 'var(--red-dim)', border: '1px solid rgba(255,23,68,0.35)',
               fontFamily: 'Share Tech Mono', color: 'var(--red)', letterSpacing: '0.1em',
             }}>
@@ -112,14 +115,13 @@ export default function App() {
             </div>
           )}
 
-          {/* ── Section 1: Controls + Grid (side by side) ── */}
-          <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start', marginBottom: 10 }}>
+          {/* ── Three-column layout: Controls | Grid | Warning Dashboard ── */}
+          <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
 
-            {/* Left — control panel */}
-            <div style={{ width: 248, flexShrink: 0 }}>
+            {/* LEFT — control panel */}
+            <div style={{ width: 252, flexShrink: 0 }}>
               <ControlPanel
                 config={config} setConfig={setConfig}
-                scenarios={scenarios}
                 onRun={() => runSimulation()}
                 onRunScenario={runScenario}
                 onReset={resetSim}
@@ -128,8 +130,8 @@ export default function App() {
               />
             </div>
 
-            {/* Right — city grid */}
-            <div style={{ flex: 1 }}>
+            {/* MIDDLE — city grid + timeline + detail panels */}
+            <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
               {loading ? (
                 <div style={{
                   height: 500, display: 'flex', flexDirection: 'column',
@@ -156,61 +158,58 @@ export default function App() {
                   blockedChannels={config.blocked_channels}
                 />
               )}
-            </div>
-          </div>
 
-          {/* ── Section 2: Timeline (full width) ── */}
-          {simData && (
-            <div style={{ marginBottom: 10 }}>
-              <TimeSlider
-                totalSteps={simData.time_steps.length - 1}
-                currentStep={currentStep}
-                setCurrentStep={setCurrentStep}
-                timeSteps={simData.time_steps}
-                isPlaying={isPlaying}
-                setIsPlaying={setIsPlaying}
-                playSpeed={playSpeed}
-                setPlaySpeed={setPlaySpeed}
+              {simData && (
+                <TimeSlider
+                  totalSteps={simData.time_steps.length - 1}
+                  currentStep={currentStep}
+                  setCurrentStep={setCurrentStep}
+                  timeSteps={simData.time_steps}
+                  isPlaying={isPlaying}
+                  setIsPlaying={setIsPlaying}
+                  playSpeed={playSpeed}
+                  setPlaySpeed={setPlaySpeed}
+                />
+              )}
+
+              {simData && (
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                  <PopulationPanel simData={simData} currentStep={currentStep} />
+                  <StatsPanel simData={simData} currentStep={currentStep} currentTime={currentTime} />
+                </div>
+              )}
+
+              {simData && (
+                <WaterLevelChart simData={simData} currentStep={currentStep} selectedCell={selectedCell} />
+              )}
+
+              {simData && <SituationBrief simData={simData} config={config} />}
+
+              <AlertPanel
+                status={currentStatus}
+                metadata={simData?.grid_metadata}
+                timeToC={simData?.time_to_critical}
+                onSelectCell={setSelectedCell}
               />
             </div>
-          )}
 
-          {/* ── Section 3: Population + Stats (side by side, full width) ── */}
-          {simData && (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
-              <PopulationPanel simData={simData} currentStep={currentStep} />
-              <StatsPanel simData={simData} currentStep={currentStep} currentTime={currentTime} />
-            </div>
-          )}
-
-          {/* ── Section 4: Charts (full width) ── */}
-          {simData && (
-            <div style={{ marginBottom: 10 }}>
-              <WaterLevelChart
-                simData={simData}
-                currentStep={currentStep}
-                selectedCell={selectedCell}
+            {/* RIGHT — Early Warning Dashboard */}
+            <div style={{ width: 265, flexShrink: 0 }}>
+              <EarlyWarningDashboard
+                statusGrid={currentStatus}
+                waterGrid={currentWater}
+                names={simData?.grid_metadata?.names}
+                population={simData?.grid_metadata?.population}
+                timeToC={simData?.time_to_critical}
+                currentTime={currentTime}
+                simReady={!!simData}
               />
             </div>
-          )}
 
-          {/* ── Section 5: Situation Brief (full width) ── */}
-          {simData && (
-            <div style={{ marginBottom: 10 }}>
-              <SituationBrief simData={simData} config={config} />
-            </div>
-          )}
-
-          {/* ── Section 6: Alert panel (full width) ── */}
-          <div>
-            <AlertPanel
-              status={currentStatus}
-              metadata={simData?.grid_metadata}
-              timeToC={simData?.time_to_critical}
-              onSelectCell={setSelectedCell}
-            />
           </div>
         </div>
+      ) : activeTab === 'terrain' ? (
+        <RealTerrainMap />
       ) : (
         <ScenarioComparison scenarios={scenarios} />
       )}

@@ -61,7 +61,7 @@ function HudSlider({ label, value, min, max, step, onChange, unit, color }) {
   )
 }
 
-export default function ControlPanel({ config, setConfig, scenarios, onRun, onRunScenario, onReset, loading, hasData }) {
+export default function ControlPanel({ config, setConfig, onRun, onRunScenario, onReset, loading, hasData }) {
   return (
     <div className="hud-panel bracket flex flex-col h-full">
       {/* Panel label */}
@@ -120,33 +120,37 @@ export default function ControlPanel({ config, setConfig, scenarios, onRun, onRu
               unit="HRS"
               color="var(--cyan)"
             />
-            {/* Drainage failure toggle */}
-            <div className="flex items-center justify-between py-2"
-                 style={{ borderTop: '1px solid var(--border-dim)' }}>
-              <div>
-                <div className="font-display text-sm tracking-wider text-white">DRAINAGE FAILURE</div>
-                <div className="readout-label mt-0.5" style={{ fontSize: 8 }}>92% CAPACITY LOSS</div>
-              </div>
-              <button
-                onClick={() => setConfig(c => ({ ...c, drainage_failure: !c.drainage_failure }))}
-                className="relative"
-                style={{
-                  width: 40, height: 20,
-                  background: config.drainage_failure ? 'rgba(255,107,0,0.3)' : 'rgba(255,255,255,0.06)',
-                  border: `1px solid ${config.drainage_failure ? '#ff6d00' : 'rgba(255,255,255,0.15)'}`,
-                  transition: 'all 0.2s',
-                  overflow: 'hidden', position: 'relative',
-                }}
-              >
-                <span style={{
-                  position: 'absolute',
-                  top: 3, left: 0, width: 12, height: 12,
-                  background: config.drainage_failure ? '#ff6d00' : 'rgba(255,255,255,0.3)',
-                  transform: config.drainage_failure ? 'translateX(23px)' : 'translateX(3px)',
-                  transition: 'all 0.2s',
-                }} />
-              </button>
-            </div>
+            {/* Drainage capacity slider */}
+            {(() => {
+              const scale   = config.drainage_scale ?? 1.0
+              const pct     = ((scale - 0.1) / 0.9) * 100
+              const color   = scale < 0.3 ? 'var(--red)' : scale < 0.7 ? 'var(--amber)' : 'var(--green)'
+              const status  = scale >= 0.9 ? 'NOMINAL' : scale >= 0.6 ? 'DEGRADED' : scale >= 0.3 ? 'IMPAIRED' : 'CRITICAL'
+              return (
+                <div style={{ borderTop: '1px solid var(--border-dim)', paddingTop: 10 }}>
+                  <div className="flex justify-between items-baseline" style={{ marginBottom: 6 }}>
+                    <div>
+                      <div className="font-display text-sm tracking-wider text-white">DRAINAGE CAPACITY</div>
+                      <div className="readout-label mt-0.5" style={{ fontSize: 9, color }}>{status}</div>
+                    </div>
+                    <span className="font-display text-xl leading-none" style={{ color }}>
+                      {Math.round(scale * 100)}%
+                    </span>
+                  </div>
+                  <input type="range" min={0.1} max={1.0} step={0.05} value={scale}
+                    onChange={e => setConfig(c => ({
+                      ...c,
+                      drainage_scale:   Number(e.target.value),
+                      drainage_failure: Number(e.target.value) <= 0.15,
+                      scenario: 'custom',
+                    }))}
+                    style={{ '--pct': `${pct}%` }} />
+                  <div className="flex justify-between" style={{ fontSize: 9, color: 'var(--text-muted)', fontFamily: 'Share Tech Mono', marginTop: 3 }}>
+                    <span>10% FAILED</span><span>100% FULL</span>
+                  </div>
+                </div>
+              )
+            })()}
 
             {/* Blocked channels mini-grid */}
             <div style={{ borderTop: '1px solid var(--border-dim)', paddingTop: 10 }}>

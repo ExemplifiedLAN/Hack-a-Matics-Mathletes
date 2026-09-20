@@ -476,7 +476,7 @@ export default function RealTerrainMap() {
       {/* Search bar */}
       <div className="hud-panel" style={{ padding: '12px 16px' }}>
         <div className="hud-panel-header justify-between" style={{ marginBottom: 10 }}>
-          <span className="label-sys" style={{ fontSize: 13 }}>REAL TERRAIN // CITY SELECTOR</span>
+          <span className="label-sys" style={{ fontSize: 13 }}>REAL TERRAIN · CITY SELECTOR</span>
           <span style={{ fontFamily: 'Share Tech Mono', fontSize: 12, color: 'var(--text-muted)' }}>
             OPENSTREETMAP · OPENTOPODATA · OVERPASS API
           </span>
@@ -708,7 +708,7 @@ export default function RealTerrainMap() {
           <div className="hud-panel" style={{ padding: 0, overflow: 'hidden' }}>
             <div className="hud-panel-header" style={{ padding: '7px 14px' }}>
               <span className="label-sys" style={{ fontSize: 13 }}>
-                {drawMode ? '✏ DRAW MODE — DRAG TO SELECT AREA' : 'OSM // LIVE MAP'}
+                {drawMode ? '✏ DRAW MODE — DRAG TO SELECT AREA' : 'OSM LIVE MAP'}
               </span>
               {terrain && (
                 <span style={{ fontFamily: 'Share Tech Mono', fontSize: 12, color: 'var(--text-muted)', marginLeft: 'auto' }}>
@@ -723,7 +723,7 @@ export default function RealTerrainMap() {
           {simResult && (
             <div className="hud-panel" style={{ padding: '12px 16px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
-                <span className="label-sys" style={{ fontSize: 13 }}>TIMELINE // REAL TERRAIN SIM</span>
+                <span className="label-sys" style={{ fontSize: 13 }}>TIMELINE · REAL TERRAIN SIM</span>
                 <span style={{ fontFamily: 'Share Tech Mono', fontSize: 15, color: 'var(--cyan)', marginLeft: 'auto' }}>
                   T+{String(Math.floor(currentTime)).padStart(2, '0')}H {String(Math.round((currentTime % 1) * 60)).padStart(2, '0')}M
                 </span>
@@ -787,7 +787,7 @@ export default function RealTerrainMap() {
       {simResult && terrain && (
         <div className="hud-panel" style={{ padding: '14px 16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-            <span className="label-sys" style={{ fontSize: 13 }}>SITUATION BRIEF // AI ANALYSIS</span>
+            <span className="label-sys" style={{ fontSize: 13 }}>SITUATION BRIEF · AI ANALYSIS</span>
             <button onClick={generateBrief} disabled={loadingBrief} className="btn-hud"
               style={{ marginLeft: 'auto', padding: '6px 20px', fontSize: 14 }}>
               {loadingBrief ? 'GENERATING...' : '⚡ GENERATE BRIEF'}

@@ -2,11 +2,11 @@ import { useState } from 'react'
 import { Play, RotateCcw, ChevronDown, ChevronRight } from 'lucide-react'
 
 const SCENARIOS = [
-  { key: 'normal',           label: 'NORMAL RAINFALL',   sub: '20 MM/HR // OPERATIONAL',         color: '#00e676' },
-  { key: 'heavy',            label: 'HEAVY RAINFALL',    sub: '80 MM/HR // STRESS MODE',          color: '#ffab00' },
-  { key: 'extreme',          label: 'EXTREME RAINFALL',  sub: '150 MM/HR // CATASTROPHIC',        color: '#ff1744' },
-  { key: 'drainage_failure', label: 'DRAINAGE FAILURE',  sub: '50 MM/HR // 92% INFRA LOSS',       color: '#ff6d00' },
-  { key: 'blocked_channel',  label: 'BLOCKED CHANNELS',  sub: '70 MM/HR // RIVER BANK SEALED',    color: '#d500f9' },
+  { key: 'normal',           label: 'NORMAL RAINFALL',   sub: '20 MM/HR · OPERATIONAL',         color: '#00e676' },
+  { key: 'heavy',            label: 'HEAVY RAINFALL',    sub: '80 MM/HR · STRESS MODE',          color: '#ffab00' },
+  { key: 'extreme',          label: 'EXTREME RAINFALL',  sub: '150 MM/HR · CATASTROPHIC',        color: '#ff1744' },
+  { key: 'drainage_failure', label: 'DRAINAGE FAILURE',  sub: '50 MM/HR · 92% INFRA LOSS',       color: '#ff6d00' },
+  { key: 'blocked_channel',  label: 'BLOCKED CHANNELS',  sub: '70 MM/HR · RIVER BANK SEALED',    color: '#d500f9' },
 ]
 
 function SysSection({ sysNum, title, children, defaultOpen = true }) {

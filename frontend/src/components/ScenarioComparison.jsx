@@ -60,7 +60,7 @@ export default function ScenarioComparison({ scenarios }) {
       {/* Selector */}
       <div className="hud-panel">
         <div className="hud-panel-header justify-between">
-          <span className="label-sys">SCENARIO // COMPARISON MATRIX</span>
+          <span className="label-sys">SCENARIO · COMPARISON MATRIX</span>
           <span className="label-sys">SELECT MIN 2</span>
         </div>
         <div style={{ padding: 14 }}>
@@ -86,7 +86,7 @@ export default function ScenarioComparison({ scenarios }) {
           </div>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             <button onClick={run} disabled={selected.length < 2 || loading} className="btn-hud">
-              {loading ? 'COMPUTING...' : 'EXECUTE // COMPARE'}
+              {loading ? 'COMPUTING...' : 'EXECUTE COMPARE'}
             </button>
             {error && <span style={{ fontFamily: 'Share Tech Mono', fontSize: 10, color: 'var(--red)' }}>{error}</span>}
           </div>
@@ -98,7 +98,7 @@ export default function ScenarioComparison({ scenarios }) {
           {/* Population chart */}
           <div className="hud-panel">
             <div className="hud-panel-header">
-              <span className="label-sys">AFFECTED POPULATION // OVER TIME</span>
+              <span className="label-sys">AFFECTED POPULATION · OVER TIME</span>
             </div>
             <div style={{ padding: '12px 16px' }}>
               <ResponsiveContainer width="100%" height={260}>

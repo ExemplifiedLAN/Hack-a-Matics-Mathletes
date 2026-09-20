@@ -15,6 +15,102 @@ import EarlyWarningDashboard from './components/EarlyWarningDashboard'
 
 const API = '/api'
 
+// Wave layer definitions — all share viewBox height 500, container 50vh
+// Each path: wave crest → fill down to y=500 (container bottom)
+const WAVE_LAYERS = [
+  { fill: 'rgba(0,12,35,1)',      path: 'M0,400 C200,368 420,432 640,396 C860,360 1060,428 1260,396 C1350,380 1400,404 1440,400 L1440,500 L0,500 Z', dur: '22s', delay: '0s'   },
+  { fill: 'rgba(0,38,68,0.96)',   path: 'M0,338 C180,298 400,370 600,332 C800,294 1000,366 1200,328 C1310,308 1390,336 1440,338 L1440,500 L0,500 Z', dur: '17s', delay: '-5s'  },
+  { fill: 'rgba(0,68,102,0.90)',  path: 'M0,275 C160,232 370,308 570,268 C770,228 975,302 1175,262 C1295,240 1380,272 1440,275 L1440,500 L0,500 Z', dur: '13s', delay: '-9s'  },
+  { fill: 'rgba(0,105,140,0.82)', path: 'M0,210 C170,165 390,245 590,205 C790,165 990,242 1190,202 C1305,180 1385,208 1440,210 L1440,500 L0,500 Z', dur: '10s', delay: '-3s'  },
+  { fill: 'rgba(0,148,180,0.68)', path: 'M0,150 C155,106 368,182 568,142 C768,102 968,178 1168,138 C1290,114 1378,148 1440,150 L1440,500 L0,500 Z', dur: '8s',  delay: '-7s'  },
+  { fill: 'rgba(0,188,218,0.38)', path: 'M0,92  C148,50  358,118 558,78  C758,38  958,114 1158,74  C1280,50  1374,90  1440,92  L1440,500 L0,500 Z', dur: '6s',  delay: '-2s'  },
+]
+
+function LandingHero({ onSelectTab }) {
+  const [hovered, setHovered] = useState(null)
+
+  return (
+    <div style={{ position: 'relative', height: '100vh', background: '#000', overflow: 'hidden' }}>
+
+      {/* Text + pills in the upper portion */}
+      <div style={{
+        position: 'absolute', top: 0, left: 0, right: 0, height: '52%',
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+        zIndex: 10, textAlign: 'center', padding: '0 24px',
+      }}>
+        <div className="label-cyan" style={{ fontSize: 13, marginBottom: 20, letterSpacing: '0.28em' }}>
+          EARLY WARNING SYSTEM · SERIES 01
+        </div>
+
+        <div className="font-display" style={{ fontSize: 100, lineHeight: 0.88, color: 'white', marginBottom: 10 }}>
+          FLOWSHIELD
+        </div>
+
+        <div style={{
+          fontFamily: 'Rajdhani', fontSize: 19, color: 'rgba(255,255,255,0.55)',
+          maxWidth: 560, lineHeight: 1.82, marginBottom: 50, fontWeight: 500,
+        }}>
+          Real-time urban flood simulation and early warning platform.
+          Model drainage networks, track rising water across real terrain,
+          and generate AI tactical briefs for emergency response teams.
+        </div>
+
+        <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
+          {[
+            ['simulation', 'SIMULATION'],
+            ['terrain',    'REAL TERRAIN'],
+            ['compare',    'SCENARIO COMPARISON'],
+          ].map(([tab, label]) => (
+            <button
+              key={tab}
+              onClick={() => onSelectTab(tab)}
+              onMouseEnter={() => setHovered(tab)}
+              onMouseLeave={() => setHovered(null)}
+              style={{
+                padding: '13px 32px',
+                borderRadius: 999,
+                background: hovered === tab ? 'rgba(0,229,255,0.18)' : 'rgba(0,229,255,0.07)',
+                border: `1px solid ${hovered === tab ? 'rgba(0,229,255,0.78)' : 'rgba(0,229,255,0.32)'}`,
+                color: 'var(--cyan)',
+                fontFamily: 'Rajdhani', fontWeight: 700, fontSize: 15, letterSpacing: '0.2em',
+                cursor: 'pointer', transition: 'all 0.2s',
+                boxShadow: hovered === tab ? '0 0 22px rgba(0,229,255,0.2)' : 'none',
+                textTransform: 'uppercase',
+              }}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Animated wave layers — all 50vh tall, stacked from bottom */}
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '50%' }}>
+        {/* Soft gradient edge blending waves into the black above */}
+        <div style={{
+          position: 'absolute', top: 0, left: 0, right: 0, height: '35%', zIndex: 10,
+          background: 'linear-gradient(to bottom, #000 0%, transparent 100%)',
+          pointerEvents: 'none',
+        }} />
+        {WAVE_LAYERS.map((l, i) => (
+          <div key={i} style={{
+            position: 'absolute', bottom: 0, left: 0,
+            width: '200%', height: '100%',
+            animation: `wave-flow ${l.dur} ${l.delay} linear infinite`,
+          }}>
+            {[0, 1].map(j => (
+              <svg key={j} viewBox="0 0 1440 500" preserveAspectRatio="none"
+                   style={{ width: '50%', height: '100%', display: 'inline-block' }}>
+                <path d={l.path} fill={l.fill} />
+              </svg>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export default function App() {
   const [simData,      setSimData]      = useState(null)
   const [loading,      setLoading]      = useState(false)
@@ -24,7 +120,7 @@ export default function App() {
   const [playSpeed,    setPlaySpeed]    = useState(300)
   const [selectedCell, setSelectedCell] = useState(null)
   const [scenarios,    setScenarios]    = useState({})
-  const [activeTab,    setActiveTab]    = useState('simulation')
+  const [activeTab,    setActiveTab]    = useState('landing')
   const [config, setConfig] = useState({
     rainfall_intensity: 50,
     duration_hours: 12,
@@ -79,15 +175,17 @@ export default function App() {
   const currentStatus = simData?.status_history?.[currentStep] ?? null
   const currentTime   = simData?.time_steps?.[currentStep]     ?? 0
 
+  if (activeTab === 'landing') {
+    return <LandingHero onSelectTab={setActiveTab} />
+  }
+
   return (
     <div style={{ minHeight: '100vh', background: '#000' }}>
-      <div className="scan-line" />
-
       {/* Sticky header + tab bar */}
       <div style={{ position: 'sticky', top: 0, zIndex: 50, background: '#000' }}>
-        <Header simData={simData} currentTime={currentTime} loading={loading} />
+        <Header simData={simData} currentTime={currentTime} loading={loading} onHome={() => setActiveTab('landing')} />
         <div style={{ display: 'flex', borderBottom: '1px solid var(--border)', padding: '0 16px' }}>
-          {[['simulation','SIMULATION // ACTIVE'],['terrain','REAL TERRAIN // MODE'],['compare','SCENARIO // COMPARE']].map(([tab, label]) => (
+          {[['simulation','SIMULATION'],['terrain','REAL TERRAIN'],['compare','SCENARIO COMPARISON']].map(([tab, label]) => (
             <button key={tab} onClick={() => setActiveTab(tab)} style={{
               padding: '7px 18px',
               fontFamily: 'Rajdhani', fontWeight: 700, fontSize: 14,

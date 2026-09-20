@@ -19,11 +19,11 @@ export default function EarlyWarningDashboard({ statusGrid, waterGrid, names, po
   critAlerts.sort((a, b) => b.water - a.water)
   warnAlerts.sort((a, b) => b.water - a.water)
 
-  const totalPop = Math.round((population?.flat().reduce((s, v) => s + v, 0) ?? 0) * 1000)
+  const totalPop = Math.round(((population?.flat() ?? []).reduce((s, v) => s + v, 0)) * 1000)
   const critPop  = critAlerts.reduce((s, a) => s + a.pop, 0)
   const warnPop  = warnAlerts.reduce((s, a) => s + a.pop, 0)
 
-  const allTTC       = timeToC?.flat().filter(v => v !== null) ?? []
+  const allTTC       = (timeToC?.flat() ?? []).filter(v => v !== null)
   const firstCritH   = allTTC.length > 0 ? Math.min(...allTTC) : null
 
   const overallStatus = !simReady ? 'STANDBY'

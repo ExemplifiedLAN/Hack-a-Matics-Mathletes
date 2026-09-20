@@ -277,20 +277,12 @@ input[type='range']::-webkit-slider-runnable-track {
   padding: 10px 12px;
 }
 
-/* ── Scan line animation ─────────────────────── */
-@keyframes scan {
-  0%   { transform: translateY(-100%); }
-  100% { transform: translateY(100vh); }
+/* ── Landing wave animation ──────────────────── */
+@keyframes wave-flow {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
-.scan-line {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  height: 1px;
-  background: linear-gradient(to right, transparent, rgba(0,229,255,0.3), transparent);
-  pointer-events: none;
-  animation: scan 8s linear infinite;
-  z-index: 9999;
-}
+
 
 /* ── Progress bar ────────────────────────────── */
 .hud-bar-track {

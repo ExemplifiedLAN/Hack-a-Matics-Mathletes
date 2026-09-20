@@ -13,7 +13,7 @@ function Clock() {
   )
 }
 
-export default function Header({ simData, currentTime, loading }) {
+export default function Header({ simData, currentTime, loading, onHome }) {
 
   const simH = simData ? Math.floor(currentTime) : 0
   const simM = simData ? Math.round((currentTime - simH) * 60) : 0
@@ -23,12 +23,16 @@ export default function Header({ simData, currentTime, loading }) {
             className="flex items-center justify-between px-6 py-3 shrink-0">
       {/* Left — brand */}
       <div className="flex items-center gap-6">
-        <div>
+        <div
+          onClick={onHome}
+          style={{ cursor: onHome ? 'pointer' : 'default' }}
+          title="Back to home"
+        >
           <div className="label-cyan" style={{ fontSize: 11, marginBottom: 2 }}>
-            EARLY WARNING SYSTEM // SERIES 01
+            EARLY WARNING SYSTEM · SERIES 01
           </div>
           <div className="font-display text-white tracking-wider leading-none" style={{ fontSize: 38 }}>
-            FLOWSHIELD //
+            FLOWSHIELD
           </div>
         </div>
 
